@@ -161,3 +161,30 @@ const inputTransferAmount = document.querySelector('.form__input--amount')
 const inputLoanAmount = document.querySelector('.form__input--loan-amount')
 const inputCloseUsername = document.querySelector('.form__input--user')
 const inputClosePin = document.querySelector('.form__input--pin')
+
+
+/creamos el campo username para todas las cuentas de usuarios
+//usamos forecha para modificar el array original, en otro caso map
+const createUsername = function (accounts) {
+  accounts.forEach(function (account) {
+    account.username = account.owner // juan sanchez
+      .toLowerCase() // juan sanchez
+      .split(" ") // ['juan', 'sanchez']
+      .map((name) => name[0]) // []
+      .join(""); // js
+  });
+};
+createUsername(accounts);
+btnLogin.addEventListener("click", function (e) {
+  //evitar que el formulario se envie
+  e.preventDefault();
+  //recojo el username y el pin y los comparo con los datos de la cuenta
+  const inputUsername = inputLoginUsername.value;
+  const inputPin = Number(inputLoginPin.value);
+  const account = accounts
+    .filter((account) => account.username === inputUsername)
+    .filter((account) => account.pin === inputPin)[0];
+    console.log (account,"****");
+  // si esta bien mensaje de bienvenida y q se vea la aplicacion
+  //cargar los datos
+});
