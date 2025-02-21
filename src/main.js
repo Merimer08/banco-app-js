@@ -1,5 +1,4 @@
 import "./style.css";
-
 document.querySelector("#app").innerHTML = `
     <nav>
       <p class="welcome">Log in to get started</p>
@@ -20,7 +19,6 @@ document.querySelector("#app").innerHTML = `
         <button class="login__btn">&rarr;</button>
       </form>
     </nav>
-
     <main class="app">
       <!-- BALANCE -->
       <div class="balance">
@@ -32,7 +30,6 @@ document.querySelector("#app").innerHTML = `
         </div>
         <p class="balance__value">0000€</p>
       </div>
-
       <!-- MOVEMENTS -->
       <div class="movements">
         <div class="movements__row">
@@ -48,7 +45,6 @@ document.querySelector("#app").innerHTML = `
           <div class="movements__value">-378€</div>
         </div>
       </div>
-
       <!-- SUMMARY -->
       <div class="summary">
         <p class="summary__label">In</p>
@@ -59,7 +55,6 @@ document.querySelector("#app").innerHTML = `
         <p class="summary__value summary__value--interest">0000€</p>
         <button class="btn--sort">&downarrow; SORT</button>
       </div>
-
       <!-- OPERATION: TRANSFERS -->
       <div class="operation operation--transfer">
         <h2>Transfer money</h2>
@@ -71,7 +66,6 @@ document.querySelector("#app").innerHTML = `
           <label class="form__label">Amount</label>
         </form>
       </div>
-
       <!-- OPERATION: LOAN -->
       <div class="operation operation--loan">
         <h2>Request loan</h2>
@@ -81,7 +75,6 @@ document.querySelector("#app").innerHTML = `
           <label class="form__label form__label--loan">Amount</label>
         </form>
       </div>
-
       <!-- OPERATION: CLOSE -->
       <div class="operation operation--close">
         <h2>Close account</h2>
@@ -97,14 +90,12 @@ document.querySelector("#app").innerHTML = `
           <label class="form__label">Confirm PIN</label>
         </form>
       </div>
-
       <!-- LOGOUT TIMER -->
       <p class="logout-timer">
         You will be logged out in <span class="timer">05:00</span>
       </p>
     </main>
 `;
-
 // Data
 const account1 = {
   owner: "Juan Sánchez",
@@ -112,30 +103,25 @@ const account1 = {
   interestRate: 1.2, // %
   pin: 1111,
 };
-
 const account2 = {
   owner: "María Portazgo",
   movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
   interestRate: 1.5,
   pin: 2222,
 };
-
 const account3 = {
   owner: "Estefanía Pueyo",
   movements: [200, -200, 340, -300, -20, 50, 400, -460],
   interestRate: 0.7,
   pin: 3333,
 };
-
 const account4 = {
   owner: "Javier Rodríguez",
   movements: [430, 1000, 700, 50, 90],
   interestRate: 1,
   pin: 4444,
 };
-
 const accounts = [account1, account2, account3, account4];
-
 // Elements
 const labelWelcome = document.querySelector(".welcome");
 const labelDate = document.querySelector(".date");
@@ -144,16 +130,13 @@ const labelSumIn = document.querySelector(".summary__value--in");
 const labelSumOut = document.querySelector(".summary__value--out");
 const labelSumInterest = document.querySelector(".summary__value--interest");
 const labelTimer = document.querySelector(".timer");
-
 const containerApp = document.querySelector(".app");
 const containerMovements = document.querySelector(".movements");
-
 const btnLogin = document.querySelector(".login__btn");
 const btnTransfer = document.querySelector(".form__btn--transfer");
 const btnLoan = document.querySelector(".form__btn--loan");
 const btnClose = document.querySelector(".form__btn--close");
 const btnSort = document.querySelector(".btn--sort");
-
 const inputLoginUsername = document.querySelector(".login__input--user");
 const inputLoginPin = document.querySelector(".login__input--pin");
 const inputTransferTo = document.querySelector(".form__input--to");
@@ -161,9 +144,7 @@ const inputTransferAmount = document.querySelector(".form__input--amount");
 const inputLoanAmount = document.querySelector(".form__input--loan-amount");
 const inputCloseUsername = document.querySelector(".form__input--user");
 const inputClosePin = document.querySelector(".form__input--pin");
-
 // creamos el campo username para todas las cuentas de usuarios
-
 // usamos forEach para modificar el array original, en otro caso map
 const createUsernames = function (accounts) {
   accounts.forEach(function (account) {
@@ -174,22 +155,18 @@ const createUsernames = function (accounts) {
       .join(""); // js
   });
 };
-
 createUsernames(accounts);
-
 btnLogin.addEventListener("click", function (e) {
   // evitar que el formulario se envíe
   e.preventDefault();
   // recojo el username y el pin y los comparo con los datos de las cuentas
   const inputUsername = inputLoginUsername.value;
   const inputPin = Number(inputLoginPin.value);
-
   const account = accounts.find(
     (account) => account.username === inputUsername
   );
   // .find((account) => account.pin === inputPin);
   // lo anterior no funciona porque account ya es un array
-
   if (account && account.pin === inputPin) {
     // MÁS CONCISO:  if (account?.pin === inputPin) {
     // si el usuario y el pin son correctos
@@ -204,16 +181,30 @@ btnLogin.addEventListener("click", function (e) {
     console.log("login incorrecto");
   }
 });
-
-const updateUI = function (account) {
+const updateUI = function ({ movements }) {
+  // const {movements} = account.movements
   // mostrar los movimientos de la cuenta
-  displayMovements(account.movements);
+  displayMovements(movements);
   // mostrar el balance de la cuenta
-  calcDisplayBalance(account);
+  displayBalance(movements);
   // mostrar el total de los movimientos de la cuenta
   // ingresos y gastos
-  calcDisplaySummary(account);
+  displaySummary(movements);
 };
-
-// TAREA: Saber calcular el balance -> reduce
-// los ingresos y los gastos -> filter + reduce
+const displayMovements = function (movements) {};
+const displayBalance = function (movements) {
+  // calculamos suma de ingresos y retiradas de efectivo
+  const balance = movements.reduce((total, movement) => total + movement, 0);
+  // actualizamos el DOM:
+  labelBalance.textContent = `${balance.toFixed(2)} €`;
+};
+const displaySummary = function (movements) {
+  const sumIn = movements
+    .filter((movement) => movement > 0)
+    .reduce((total, movement) => total + movement, 0);
+  labelSumIn.textContent = `${sumIn.toFixed(2)} €`;
+  const sumOut = movements
+    .filter((movement) => movement < 0)
+    .reduce((total, movement) => total + movement, 0);
+  labelSumOut.textContent = `${sumOut.toFixed(2)} €`;
+};
